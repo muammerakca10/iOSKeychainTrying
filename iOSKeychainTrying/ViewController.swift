@@ -28,6 +28,19 @@ class ViewController: UIViewController {
     
     
     @objc func adjustForKeyboard (notification : Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {return}
+        let keyboardScreenEnd = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEnd, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            secret.contentInset = .zero
+        } else {
+            secret.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+        
+        secret.scrollIndicatorInsets = secret.contentInset
+        let selectedRange = secret.selectedRange
+        secret.scrollRangeToVisible(selectedRange)
         
     }
     
